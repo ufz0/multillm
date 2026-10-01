@@ -8,6 +8,12 @@ Single-file Textual app (`agents.py`): N LLM agents with inboxes, talking via a 
 - `.env` is required: `API_KEY`, `API_URL` (any OpenAI-compatible endpoint). `MODEL` optional — falls back to the first entry of `/models`. App exits immediately if `API_URL` is unset.
 - Backend: llama.cpp `llama-server` **must** run with `--jinja`, or tool calls break.
 
+## Git workflow
+
+- Never commit directly to `main`. All work lands on `dev`; push `dev` to origin as work progresses.
+- When a feature is complete, open a PR from `dev` into `main` (use `gh pr create`).
+- Feature branches may be used for isolated work, but they merge into `dev`, not `main`.
+
 ## Running / verification
 
 - `venv/bin/python agents.py` → then type into the input box
