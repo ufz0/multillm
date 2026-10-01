@@ -1,0 +1,1 @@
+python agents.py "Discuss with the other agents what a good name for a homelab is. Once you agree, agent1 sends the final pick to human."
