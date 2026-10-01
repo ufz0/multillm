@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>multillm</title>
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="%230C0F16"/><circle cx="10.5" cy="11.5" r="3.2" fill="%2322D3EE"/><circle cx="21.5" cy="11.5" r="3.2" fill="%23E879F9"/><circle cx="10.5" cy="21.5" r="3.2" fill="%23FBBF24"/><circle cx="21.5" cy="21.5" r="3.2" fill="%2360A5FA"/></svg>'>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">
+    <span class="livedot" id="livedot" title="stream disconnected"></span>
+    <span class="wordmark">multillm</span>
+  </div>
+  <div class="readout" id="readout">connecting&hellip;</div>
+  <button class="ghost" id="resetBtn" type="button" title="Stop all agents and start a fresh session">new session</button>
+</header>
+
+<main>
+  <section class="panels" id="panels" aria-label="agent streams"></section>
+
+  <section class="channel" aria-label="channel">
+    <div class="channel-head">
+      <h2>channel</h2>
+      <span class="hint" id="feedHint">everything the agents say to each other, and to you</span>
+    </div>
+    <ol class="feed" id="feed">
+      <li class="empty" id="feedEmpty">No messages yet. Send one below and an agent will pick it up.</li>
+    </ol>
+  </section>
+</main>
+
+<footer class="composer">
+  <div class="composer-inner">
+    <div class="chips" id="chips" role="tablist" aria-label="recipient"></div>
+    <div class="compose-row">
+      <textarea id="msg" rows="2" placeholder="Message agent1…" aria-label="message"></textarea>
+      <button class="send" id="sendBtn" type="button">Send</button>
+    </div>
+    <p class="keys">enter sends &middot; shift+enter new line</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

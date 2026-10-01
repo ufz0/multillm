@@ -86,8 +86,9 @@ pending = 0           # messages delivered but not yet fully processed
 sent = 0              # agent-to-agent messages since the last human message
 lock = threading.Lock()
 log_lock = threading.Lock()
-session_log = None        # file handle for this run's session log, set by main()
+session_log = None        # file handle for this run's session log, set by start()
 events = queue.Queue()  # agent threads -> UI
+threads = []            # agent worker threads, set by start(); other frontends (web.py) reuse all of the above
 
 
 def setup(n):
@@ -252,6 +253,8 @@ def agent(name):
     messages = [{"role": "system", "content": SYSTEM.format(me=name, others=others)}]
     while True:
         incoming = inboxes[name].get()
+        if incoming is None:      # stop sentinel from shutdown()
+            return
         messages.append({"role": "user", "content": incoming})
         emit("wake", name, incoming)
         try:
@@ -400,21 +403,40 @@ class AgentsApp(App):
         human_send(to, text)
 
 
-def main():
+def start(n):
+    """Create the inbox set, open a session log and spawn one worker thread per agent.
+
+    Shared by the terminal UI (main) and any other frontend, e.g. web.py.
+    """
     global MODEL
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-n", type=int, default=N_AGENTS, help="number of agents")
-    parser.add_argument("task", nargs="*", help="optional first task for agent1")
-    args = parser.parse_args()
     if not MODEL:
         try:
             MODEL = client.models.list().data[0].id
         except Exception as e:
             sys.exit(f"could not get model list from {client.base_url}: {e}\nset MODEL in .env")
-    setup(args.n)
+    setup(n)
     print(f"session log: {new_session_log()}")
-    for n in names:
-        threading.Thread(target=agent, args=(n,), daemon=True).start()
+    for nm in names:
+        t = threading.Thread(target=agent, args=(nm,), daemon=True)
+        t.start()
+        threads.append(t)
+
+
+def shutdown():
+    """Send each agent a stop sentinel and wait for the workers to finish."""
+    for nm in names:
+        inboxes[nm].put(None)
+    for t in threads:
+        t.join(timeout=CMD_TIMEOUT + 5)
+    threads.clear()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", type=int, default=N_AGENTS, help="number of agents")
+    parser.add_argument("task", nargs="*", help="optional first task for agent1")
+    args = parser.parse_args()
+    start(args.n)
     AgentsApp(" ".join(args.task) or None).run()
 
 

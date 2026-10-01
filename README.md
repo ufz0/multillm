@@ -1,6 +1,6 @@
 # multillm
 
-Multi-agent playground: N LLM agents with inboxes, talking to each other through a `send_message` tool, while every agent's output streams live into a terminal UI. Single-file Textual app — no package, no tests.
+Multi-agent playground: N LLM agents with inboxes, talking to each other through a `send_message` tool, while every agent's output streams live into a terminal UI or a web UI. One engine (`agents.py`), two frontends — Textual TUI and Flask + SSE (`web.py`). No package, no tests.
 
 Built around any OpenAI-compatible endpoint, primarily a local llama.cpp `llama-server` (must run with `--jinja` for tool calls).
 
@@ -27,6 +27,15 @@ venv/bin/python agents.py -n 4 "your task"       # 4 agents, task goes to agent1
 ```
 
 Input box: plain text goes to `agent1`, `@agent2 text` targets agent2, Ctrl+Q quits. Agents can also run shell commands locally via the `run_command` tool (60s timeout) and check real state instead of guessing. Every message lands in `logs/session_*.txt`.
+
+### Web UI
+
+```sh
+venv/bin/python web.py                     # -> http://127.0.0.1:4321
+venv/bin/python web.py -n 4 "your task"    # same args as the terminal UI
+```
+
+Per-agent live streams, a channel of everything they say to each other, recipient chips, and a session reset button. No auth by design — keep it on localhost or a trusted network. `WEB_HOST`/`WEB_PORT` override the bind address. The frontend is vanilla HTML/CSS/JS in `static/`, no build step.
 
 ## Notes
 
