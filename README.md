@@ -1,6 +1,6 @@
 # multillm
 
-Multi-agent playground: N LLM agents with inboxes, talking to each other through a `send_message` tool, while every agent's output streams live into a terminal UI. Single-file Textual app — no package, no tests.
+Multi-agent playground: N LLM agents with inboxes, talking to each other through a `send_message` tool, while every agent's output streams live into a terminal UI.
 
 Built around any OpenAI-compatible endpoint, primarily a local llama.cpp `llama-server` (must run with `--jinja` for tool calls).
 
